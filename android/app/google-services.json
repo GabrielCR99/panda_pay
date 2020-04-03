@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "819026573448",
+    "firebase_url": "https://pandapay-78cd7.firebaseio.com",
+    "project_id": "pandapay-78cd7",
+    "storage_bucket": "pandapay-78cd7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:819026573448:android:c7468dfccb489c68aa873d",
+        "android_client_info": {
+          "package_name": "br.com.roveri.pandapay"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "819026573448-5ugked5edigqltrs6213c6gjnpfqr84b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDssKUEmM--v3RB0jnnjrTu4oNXJwdJBUQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "819026573448-5ugked5edigqltrs6213c6gjnpfqr84b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

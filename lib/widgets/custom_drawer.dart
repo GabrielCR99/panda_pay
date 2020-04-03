@@ -31,7 +31,7 @@ class CustomDrawer extends StatelessWidget {
                           accountEmail: Text('${model.userData['email']}'),
                         ),
                         const Divider(height: 20.0),
-                        DrawerTile(Icons.home, 'Teste', pageController, 0),
+                        DrawerTile(Icons.home, 'Meu cartão', pageController, 0),
                         DrawerTile(
                             Icons.verified_user, 'Teste', pageController, 1),
                         DrawerTile(Icons.home, 'Teste', pageController, 2),

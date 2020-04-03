@@ -51,7 +51,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         ),
         body:
-            ScopedModelDescendant<UserModel>(builder: (context, child, model) {
+        ScopedModelDescendant<UserModel>(builder: (context, child, model) {
           if (model.isLoading)
             return Center(child: CircularProgressIndicator());
           return Form(
@@ -121,7 +121,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           labelText: 'Senha',
                           hint: 'Senha cadastrada',
                           validateText: (password) {
-                            if (password.isEmpty) return 'Senha inválida!';
+                            if (password.isEmpty)
+                              return 'Senha inválida!';
+                            else if (password.length < 6)
+                              return 'A senha deve conter mais de 6 caracteres!';
                             return null;
                           },
                         ),
@@ -169,7 +172,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       'my 32 length key................');
                                   final iv = keyutf.IV.fromLength(16);
                                   final encrypter =
-                                      keyutf.Encrypter(keyutf.AES(key));
+                                  keyutf.Encrypter(keyutf.AES(key));
                                   print('Validação ok');
                                   final encrypted = encrypter.encrypt(
                                       _passwordController.text,

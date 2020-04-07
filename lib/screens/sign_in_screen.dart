@@ -19,8 +19,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  FirebaseUser _currentUser;
-  GoogleSignIn _googleSignIn = GoogleSignIn();
   static final Pattern pattern =
       r"^(([^<>()[\]\\.,;:\s@\']+(\.[^<>()[\]\\.,;:\s@\']+)*)|(\'.+\'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$";
 
@@ -107,8 +105,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: const Text(
                                     'Entrar',
                                     style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600),
+                                      color: Colors.white,
+                                      fontSize: 16.0,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -121,12 +120,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                             child: const Text(
                               'Esqueceu sua senha do PandaPay?',
-                              style: TextStyle(fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
                               textAlign: TextAlign.center,
                             ),
                           ),
                           SizedBox(
-                            height: 50.0,
+                            height: 80.0,
                           ),
                           const Text(
                             'Acessar com:',
@@ -137,14 +138,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             Buttons.Google,
                             text: 'Google',
                             onPressed: () async {
-                              model.signOut();
-//                              FirebaseUser user = await getUser();
-//                              if (user == null)
-                              _scaffoldKey.currentState.showSnackBar(
-                                SnackBar(
-                                  content: Text('text'),
-                                ),
-                              );
+                              FirebaseUser user = await model.googleLogin();
+                              if (user == null)
+                                _scaffoldKey.currentState.showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text('Erro ao fazer login com Google!'),
+                                  ),
+                                );
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                     builder: (context) => HomeScreen()),
@@ -171,7 +172,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: const Text(
                                   'Não tem uma conta no PandaPay? ',
                                   style: TextStyle(
-                                      fontSize: 16, color: Colors.black),
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                               Align(
@@ -206,34 +209,6 @@ class _LoginScreenState extends State<LoginScreen> {
         },
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    FirebaseAuth.instance.onAuthStateChanged.listen((user) {
-      _currentUser = user;
-    });
-  }
-
-  Future<FirebaseUser> getUser() async {
-    if (_currentUser != null) return _currentUser;
-    try {
-      final GoogleSignInAccount googleSignInAccount =
-          await _googleSignIn.signIn();
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
-      final AuthCredential credential = GoogleAuthProvider.getCredential(
-          idToken: googleSignInAuthentication.idToken,
-          accessToken: googleSignInAuthentication.accessToken);
-
-      final AuthResult result =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-      final FirebaseUser firebaseUser = result.user;
-      return firebaseUser;
-    } catch (error) {
-      return null;
-    }
   }
 
   void _onSuccess() {

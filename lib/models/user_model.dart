@@ -2,15 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class UserModel extends Model {
   FirebaseAuth _auth = FirebaseAuth.instance;
   String authError = '';
   String errorMessageSignIn = '';
+  String errorMessageRecovery = '';
+  GoogleSignIn googleSignIn = GoogleSignIn();
 
   FirebaseUser firebaseUser;
   Map<String, dynamic> userData = Map();
+  String googleName = '';
+  String googleEmail = '';
+  String googlePhoto = '';
 
   bool isLoading = false;
 
@@ -111,13 +117,23 @@ class UserModel extends Model {
     _loadCurrentUser();
   }
 
-
   bool isLoggedIn() {
-    return firebaseUser != null;
+    return firebaseUser != null || googleSignIn.currentUser != null;
   }
 
-  void passwordRecovery(String email) {
-    _auth.sendPasswordResetEmail(email: email);
+  void sendPasswordRecovery(String email, VoidCallback onSuccess,
+      Function(String) onError(String errorMessage)) {
+    _auth.sendPasswordResetEmail(email: email).then((_) {
+      onSuccess();
+    }).catchError((e) {
+      switch (e.code) {
+        case 'ERROR_USER_NOT_FOUND':
+          errorMessageRecovery =
+              'O usuário não foi encontrado no nosso banco de dados.';
+      }
+      onError(errorMessageRecovery);
+      print(e.code);
+    });
   }
 
   Future<Null> _saveUserData(Map<String, dynamic> userData) async {
@@ -130,6 +146,9 @@ class UserModel extends Model {
 
   void signOut() async {
     await _auth.signOut();
+    await googleSignIn.signOut();
+    googleName = '';
+    googlePhoto = '';
     userData = Map();
     firebaseUser = null;
     notifyListeners();
@@ -148,6 +167,34 @@ class UserModel extends Model {
         userData = docUser.data;
       }
     }
+    print(userData);
     notifyListeners();
+  }
+
+  Future<FirebaseUser> googleLogin() async {
+    if (firebaseUser != null) return firebaseUser;
+    try {
+      final GoogleSignInAccount googleSignInAccount =
+          await googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
+      googleName = googleSignInAccount.displayName;
+      googleEmail = googleSignInAccount.email;
+      googlePhoto = googleSignInAccount.photoUrl;
+      final AuthCredential credential = GoogleAuthProvider.getCredential(
+          idToken: googleSignInAuthentication.idToken,
+          accessToken: googleSignInAuthentication.accessToken);
+
+      final AuthResult result =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      final FirebaseUser firebaseUser = result.user;
+      return firebaseUser;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  bool isGoogleSignIn() {
+    return googleSignIn.currentUser != null;
   }
 }

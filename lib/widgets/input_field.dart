@@ -26,7 +26,9 @@ class InputField extends StatelessWidget {
     this.labelText,
     this.validateText,
     this.inputFormatters,
-    this.keyboardType, this.suffixIcon, this.textCapitalization,
+    this.keyboardType,
+    this.suffixIcon,
+    this.textCapitalization,
   });
 
   @override

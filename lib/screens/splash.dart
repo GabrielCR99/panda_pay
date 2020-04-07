@@ -15,7 +15,10 @@ class _SplashState extends State<Splash> {
       seconds: 3,
       title: const Text('PandaPay'),
       navigateAfterSeconds: IntroScreen(),
-      image: Image.asset('images/pandawhite.png'),
+      image: Image.asset(
+        'images/pandawhite.png',
+        alignment: Alignment.center,
+      ),
       backgroundColor: Colors.black,
       styleTextUnderTheLoader: Theme.of(context).textTheme.display1,
       loadingText: const Text('Carregando...'),

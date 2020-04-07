@@ -9,7 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pandapay/models/business_type_model.dart';
 import 'package:pandapay/models/user_model.dart';
 import 'package:pandapay/screens/home_screen.dart';
-import 'package:pandapay/screens/signup/widgets/business_button.dart';
+import 'package:pandapay/screens/sign_in_screen.dart';
 import 'package:pandapay/widgets/input_field.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -26,6 +26,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   final _emailController = TextEditingController();
   final _cpfController = TextEditingController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -51,7 +52,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         ),
         body:
-        ScopedModelDescendant<UserModel>(builder: (context, child, model) {
+            ScopedModelDescendant<UserModel>(builder: (context, child, model) {
           if (model.isLoading)
             return Center(child: CircularProgressIndicator());
           return Form(
@@ -64,7 +65,88 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     margin: const EdgeInsets.all(16.0),
                     child: Column(
                       children: <Widget>[
-                        BusinessButtons(initialValue: _typeModel.orderBy),
+                        FormField<OrderBy>(
+                          initialValue: OrderBy.TO_ME,
+                          builder: (FormFieldState state) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      state.didChange(OrderBy.TO_ME);
+                                      _typeModel.orderBy = state.value;
+                                      _cpfController.text = '';
+                                    });
+                                  },
+                                  child: Container(
+                                    child: Text(
+                                      'PARA MIM',
+                                      style: TextStyle(
+                                        color: state.value == OrderBy.TO_ME
+                                            ? Colors.white
+                                            : Colors.grey,
+                                      ),
+                                    ),
+                                    alignment: Alignment.center,
+                                    width: 160,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      color: state.value == OrderBy.TO_ME
+                                          ? Color(0xFF13CE66)
+                                          : Colors.white,
+                                      border: Border.all(
+                                          color: state.value == OrderBy.TO_ME
+                                              ? Colors.transparent
+                                              : Colors.grey),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(50.0),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 40.0),
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      state.didChange(OrderBy.TO_MY_BUSINESS);
+                                      _typeModel.orderBy = state.value;
+                                      _cpfController.text = '';
+                                    });
+                                  },
+                                  child: Container(
+                                    child: Text(
+                                      'PARA MEU NEGÓCIO',
+                                      style: TextStyle(
+                                        color: state.value ==
+                                                OrderBy.TO_MY_BUSINESS
+                                            ? Colors.white
+                                            : Colors.grey,
+                                      ),
+                                    ),
+                                    alignment: Alignment.center,
+                                    width: 160,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          state.value == OrderBy.TO_MY_BUSINESS
+                                              ? Color(0xFF13CE66)
+                                              : Colors.white,
+                                      border: Border.all(
+                                          color: state.value ==
+                                                  OrderBy.TO_MY_BUSINESS
+                                              ? Colors.transparent
+                                              : Colors.grey),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(50.0),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            );
+                          },
+                        ),
                         const SizedBox(height: 30.0),
                         InputField(
                           textCapitalization: TextCapitalization.words,
@@ -73,10 +155,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           suffixIcon: _typeModel.orderBy == OrderBy.TO_ME
                               ? Icon(Icons.person)
                               : Icon(Icons.account_balance),
-                          labelText: 'Nome',
-                          hint: 'O nome que está no seu RG ',
+                          labelText:
+                              '${_typeModel.orderBy == OrderBy.TO_ME ? 'Nome' : 'Razão Social'}',
+                          hint:
+                              '${_typeModel.orderBy == OrderBy.TO_ME ? 'O nome que está no seu RG' : 'O nome da sua empresa'}',
                           validateText: (name) {
-                            if (name.isEmpty) return 'Nome inválido!';
+                            if (name.isEmpty) return 'Campo obrigatório!';
                             return null;
                           },
                         ),
@@ -88,8 +172,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           suffixIcon: Icon(Icons.email),
                           labelText: 'E-mail',
                           hint: 'O E-mail que você mais utiliza',
-                          validateText: (name) {
-                            if (name.isEmpty) return 'Nome inválido!';
+                          validateText: (email) {
+                            if (email.isEmpty ||
+                                !email.contains(RegExp(
+                                    r"^(([^<>()[\]\\.,;:\s@\']+(\.[^<>()[\]\\.,;:\s@\']+)*)|(\'.+\'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$")))
+                              return 'E-mail inválido!';
                             return null;
                           },
                         ),
@@ -98,17 +185,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           textCapitalization: TextCapitalization.none,
                           controller: _cpfController,
                           suffixIcon: Icon(FontAwesomeIcons.idCard),
-                          labelText: 'CPF',
-                          hint: '000.000.000 - 00',
+                          labelText:
+                              '${_typeModel.orderBy == OrderBy.TO_ME ? 'CPF' : 'CNPJ'}',
+                          hint:
+                              '${_typeModel.orderBy == OrderBy.TO_ME ? '000.000.000-00' : '00.000.000/0000-00'}',
                           isObscure: false,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             WhitelistingTextInputFormatter.digitsOnly,
-                            CpfInputFormatter(),
+                            _typeModel.orderBy == OrderBy.TO_ME
+                                ? CpfInputFormatter()
+                                : CnpjInputFormatter(),
                           ],
                           validateText: (cpf) {
-                            if (cpf.isEmpty || !CPF.isValid(cpf))
-                              return 'CPF inválido!';
+                            if (cpf.isEmpty ||
+                                (!CPF.isValid(cpf) &&
+                                    _typeModel.orderBy == OrderBy.TO_ME) ||
+                                (!CNPJ.isValid(cpf) &&
+                                    _typeModel.orderBy ==
+                                        OrderBy.TO_MY_BUSINESS))
+                              return 'CPF/CNPJ inválido!';
                             return null;
                           },
                         ),
@@ -123,6 +219,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           validateText: (password) {
                             if (password.isEmpty)
                               return 'Senha inválida!';
+                            else if (password.length < 6)
+                              return 'A senha deve conter mais de 6 caracteres!';
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16.0),
+                        InputField(
+                          textCapitalization: TextCapitalization.none,
+                          suffixIcon: Icon(Icons.lock),
+                          isObscure: true,
+                          controller: _confirmPasswordController,
+                          labelText: 'Confirmar senha',
+                          hint: 'Repita a senha',
+                          validateText: (password) {
+                            if (password.isEmpty ||
+                                !password.contains(_passwordController.text))
+                              return 'Senha não confere!';
                             else if (password.length < 6)
                               return 'A senha deve conter mais de 6 caracteres!';
                             return null;
@@ -167,12 +280,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
                               onPressed: () {
+                                print(_typeModel.orderBy);
+                                print(_nameController);
+
+                                print(_cpfController.text.length);
+                                print(_phoneController.text);
                                 if (_formKey.currentState.validate()) {
                                   final key = keyutf.Key.fromUtf8(
                                       'my 32 length key................');
                                   final iv = keyutf.IV.fromLength(16);
                                   final encrypter =
-                                  keyutf.Encrypter(keyutf.AES(key));
+                                      keyutf.Encrypter(keyutf.AES(key));
                                   print('Validação ok');
                                   final encrypted = encrypter.encrypt(
                                       _passwordController.text,
@@ -182,9 +300,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     'name': _nameController.text,
                                     'email': _emailController.text,
                                     'password': encrypted.base64,
-                                    'cpf': _cpfController.text,
+                                    _typeModel.orderBy == OrderBy.TO_ME
+                                        ? 'cpf'
+                                        : 'cnpj': _cpfController.text,
                                     'phone': _phoneController.text,
-                                    'corpname': '',
                                   };
 
                                   model.signUp(
@@ -196,16 +315,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       return null;
                                     },
                                   );
-
-                                  print(_cpfController.text);
-                                  print(_phoneController.text);
                                 }
                               },
                               child: const Text(
                                 'Cadastrar',
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600),
+                                    color: Colors.white, fontSize: 16.0),
                               ),
                             ),
                           ),
@@ -230,6 +345,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           onPressed: () {},
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.bottomLeft,
+                                child: const Text(
+                                  'Já tem uma conta no PandaPay? ',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => LoginScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text(
+                                    'Entre aqui!',
+                                    style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      color: Colors.blue,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],

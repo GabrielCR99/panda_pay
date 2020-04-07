@@ -22,10 +22,10 @@ class _IntroScreenState extends State<IntroScreen> {
       Slide(
         title: 'Pague sem sair de casa',
         description:
-            'Contas, boletos, recargas e muito mais. Tudo isso apenas com pagamento'
+            'Contas, boletos, recargas e muito mais. Tudo isso apenas com a tecnologia de pagamento'
             ' QR Code.',
         pathImage: 'images/qr-code-phone.png',
-        backgroundColor: Color(0xfff5a623),
+        backgroundColor: Color(0xff7BAEBC),
         maxLineTitle: 1,
       ),
     );
@@ -33,7 +33,7 @@ class _IntroScreenState extends State<IntroScreen> {
       Slide(
         title: 'Sem taxas abusivas',
         description:
-            'Cansado de pagar taxas com valores altos, sem entender o por quê?'
+            'Cansado de pagar taxas com valores altos para tudo, sem entender o por quê?'
             ' Então o PandaPay é pra você!',
         pathImage: 'images/abusive_tax.jpg',
         backgroundColor: Color(0xff7BAEBC),
@@ -44,18 +44,18 @@ class _IntroScreenState extends State<IntroScreen> {
       Slide(
         title: 'Transferências instantâneas',
         description:
-            'Transferências ilimitadas, sem taxas. Garantimos a segurança'
+            'Transfira ilimitadamente, a hora que quiser e sem taxas. Garantimos a segurança'
             ' com a tecnologia Blockchain.',
         pathImage: 'images/mobile_transfer.png',
-        backgroundColor: Color(0xff9932CC),
+        backgroundColor: Color(0xff7BAEBC),
         maxLineTitle: 2,
       ),
     );
     slides.add(
       Slide(
-        backgroundColor: Color(0xff9932CC),
+        backgroundColor: Color(0xff7BAEBC),
         title: 'Curtiu, né?',
-        description: 'Então vem fazer parte do PandaPay :)',
+        description: 'Então, faça parte do PandaPay e peça já o seu PandaCard!',
         pathImage: 'images/happy_panda.png',
         maxLineTitle: 1,
       ),

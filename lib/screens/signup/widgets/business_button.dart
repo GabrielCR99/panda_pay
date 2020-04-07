@@ -3,13 +3,15 @@ import 'package:pandapay/models/business_type_model.dart';
 
 class BusinessButtons extends StatelessWidget {
   final OrderBy initialValue;
+  final FormFieldSetter<OrderBy> onSaved;
 
-  BusinessButtons({Key key, this.initialValue});
+  BusinessButtons({this.initialValue, this.onSaved});
 
   @override
   Widget build(BuildContext context) {
     return FormField<OrderBy>(
       initialValue: initialValue,
+      onSaved: onSaved,
       builder: (FormFieldState state) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,

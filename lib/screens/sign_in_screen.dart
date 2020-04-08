@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pandapay/models/user_model.dart';
 import 'package:pandapay/screens/home_screen.dart';
 import 'package:pandapay/screens/password_recovery_screen.dart';
@@ -45,6 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Colors.white,
                     child: SingleChildScrollView(
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
                           Image.asset(
                             'images/PandaPay_Horizontal_SemSlogan_Black.png',
@@ -79,88 +79,137 @@ class _LoginScreenState extends State<LoginScreen> {
                               return null;
                             },
                           ),
-                          const SizedBox(height: 16),
+                          Align(
+                            alignment: Alignment.bottomRight,
+                            heightFactor: 1.0,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => PasswordRecovery()));
+                              },
+                              child: const Text(
+                                'Esqueceu sua senha do PandaPay?',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                textAlign: TextAlign.end,
+                              ),
+                            ),
+                          ),
                           Padding(
                             padding:
                                 const EdgeInsets.only(top: 20.0, bottom: 10.0),
                             child: Container(
-                              child: SizedBox(
-                                width: 220.0,
-                                child: RaisedButton(
-                                  color: Colors.blueGrey,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                  onPressed: () {
-                                    if (_formKey.currentState.validate())
-                                      model.signIn(
-                                          email: _emailController.text,
-                                          password: _passwordController.text,
-                                          onSuccess: _onSuccess,
-                                          onFail: (errorMessage) {
-                                            _onFail(errorMessage);
-                                            return null;
-                                          });
-                                  },
-                                  child: const Text(
-                                    'Entrar',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16.0,
-                                    ),
+                              height: 50,
+                              child: RaisedButton(
+                                color: Colors.blueGrey,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                onPressed: () {
+                                  if (_formKey.currentState.validate())
+                                    model.signIn(
+                                        email: _emailController.text,
+                                        password: _passwordController.text,
+                                        onSuccess: _onSuccess,
+                                        onFail: (errorMessage) {
+                                          _onFail(errorMessage);
+                                          return null;
+                                        });
+                                },
+                                child: const Text(
+                                  'Entrar',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => PasswordRecovery()));
-                            },
-                            child: const Text(
-                              'Esqueceu sua senha do PandaPay?',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
                           SizedBox(
-                            height: 80.0,
+                            height: 40.0,
                           ),
                           const Text(
                             'Acessar com:',
                             textAlign: TextAlign.center,
                             style: TextStyle(fontWeight: FontWeight.w600),
                           ),
-                          SignInButton(
-                            Buttons.Google,
-                            text: 'Google',
-                            onPressed: () async {
-                              FirebaseUser user = await model.googleLogin();
-                              if (user == null)
-                                _scaffoldKey.currentState.showSnackBar(
-                                  SnackBar(
-                                    content:
-                                        Text('Erro ao fazer login com Google!'),
-                                  ),
+                          Container(
+                            height: 50,
+                            child: RaisedButton(
+                              color: Color(0xFFFFFFFF),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0)),
+                              onPressed: () async {
+                                FirebaseUser user = await model.googleLogin();
+                                if (user == null)
+                                  _scaffoldKey.currentState.showSnackBar(
+                                    SnackBar(
+                                      content: const Text(
+                                          'Erro ao fazer login com Google!'),
+                                    ),
+                                  );
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => HomeScreen()),
                                 );
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => HomeScreen()),
-                              );
-                            },
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              },
+                              child: Row(
+                                children: <Widget>[
+                                  Image.asset(
+                                    'images/google_logo.png',
+                                    height: 20,
+                                  ),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          left: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              3.5),
+                                      child:  Text(
+                                        'Google',
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontSize: 16.0,
+                                        ),
+                                      )),
+                                ],
+                              ),
                             ),
                           ),
-                          SignInButton(
-                            Buttons.Facebook,
-                            text: 'Facebook',
-                            onPressed: () {},
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                          SizedBox(
+                            height: 10.0,
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 50,
+                            child: RaisedButton(
+                              color: Color(0xFF3B5998),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0)),
+                              onPressed: () {},
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    FontAwesomeIcons.facebook,
+                                    color: Colors.white,
+                                  ),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          left: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              3.5),
+                                      child: const Text(
+                                        'Facebook',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16.0,
+                                        ),
+                                      )),
+                                ],
+                              ),
                             ),
                           ),
                           const SizedBox(height: 60.0),
@@ -168,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Align(
-                                alignment: Alignment.bottomLeft,
+                                alignment: Alignment.center,
                                 child: const Text(
                                   'Não tem uma conta no PandaPay? ',
                                   style: TextStyle(

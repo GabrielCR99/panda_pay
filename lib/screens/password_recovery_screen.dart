@@ -69,7 +69,7 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
                           padding: const EdgeInsets.only(top: 16.0),
                           child: const Text(
                             'O panda sente muito que voce esqueceu sua senha. '
-                            'Mas, fique tranquilo, a gente vai resolver ;) \n'
+                            'Mas, fique tranquilo, nós resolveremos ;) \n'
                             'Basta você inserir qual o E-mail que utilizou',
                             textAlign: TextAlign.justify,
                             style: TextStyle(fontWeight: FontWeight.w400),

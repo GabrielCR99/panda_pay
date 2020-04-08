@@ -1,10 +1,9 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:cpfcnpj/cpfcnpj.dart';
-import 'package:encrypt/encrypt.dart' as keyutf;
+import 'package:encrypt/encrypt.dart' as keyUtf;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_signin_button/button_list.dart';
-import 'package:flutter_signin_button/button_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pandapay/models/business_type_model.dart';
 import 'package:pandapay/models/user_model.dart';
@@ -29,7 +28,53 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _confirmPasswordController = TextEditingController();
   final _emailController = TextEditingController();
   final _cpfController = TextEditingController();
+  final _codeController = TextEditingController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  String verificationId;
+
+  /// Sends the code to the specified phone number.
+  Future<void> _sendCodeToPhoneNumber() async {
+    final PhoneVerificationCompleted verificationCompleted =
+        (AuthCredential auth) {
+      setState(() {
+        print(
+            'Inside _sendCodeToPhoneNumber: signInWithPhoneNumber auto succeeded: $auth');
+      });
+    };
+
+    final PhoneVerificationFailed verificationFailed =
+        (AuthException authException) {
+      setState(() {
+        print(
+            'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
+      });
+    };
+
+    final PhoneCodeSent codeSent =
+        (String verificationId, [int forceResendingToken]) async {
+      this.verificationId = verificationId;
+      print(
+          'code sent to ${_phoneController.text.replaceAll('(', '').replaceAll(')', '')} $forceResendingToken');
+    };
+
+    final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
+        (String verificationId) {
+      this.verificationId = verificationId;
+      print("time out");
+      AuthCredential a = PhoneAuthProvider.getCredential(
+          verificationId: verificationId, smsCode: 'asdqwe');
+      print(a.toString().contains('asdqwe'));
+    };
+
+    await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber:
+            '+55${_phoneController.text.replaceAll('(', '').replaceAll(')', '')}',
+        timeout: const Duration(seconds: 5),
+        verificationCompleted: verificationCompleted,
+        verificationFailed: verificationFailed,
+        codeSent: codeSent,
+        codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +109,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     color: Colors.white,
                     margin: const EdgeInsets.all(16.0),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         FormField<OrderBy>(
                           initialValue: OrderBy.TO_ME,
@@ -147,7 +193,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             );
                           },
                         ),
-                        const SizedBox(height: 30.0),
+                        const SizedBox(height: 20.0),
                         InputField(
                           textCapitalization: TextCapitalization.words,
                           controller: _nameController,
@@ -217,9 +263,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           labelText: 'Senha',
                           hint: 'Senha cadastrada',
                           validateText: (password) {
-                            if (password.isEmpty)
-                              return 'Senha inválida!';
-                            else if (password.length < 6)
+                            if (password.isEmpty) return 'Senha obrigatória!';
+                            if (password.length <= 6)
                               return 'A senha deve conter mais de 6 caracteres!';
                             return null;
                           },
@@ -236,7 +281,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             if (password.isEmpty ||
                                 !password.contains(_passwordController.text))
                               return 'Senha não confere!';
-                            else if (password.length < 6)
+                            else if (password.length <= 6)
                               return 'A senha deve conter mais de 6 caracteres!';
                             return null;
                           },
@@ -246,7 +291,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             Container(
-                              width: 200,
+                              width: 250,
                               child: InputField(
                                 textCapitalization: TextCapitalization.none,
                                 controller: _phoneController,
@@ -268,12 +313,65 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 },
                               ),
                             ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16.0),
+                              child: Container(
+                                width: 110,
+                                height: 50,
+                                child: RaisedButton(
+                                  disabledColor: Colors.blueGrey.withAlpha(150),
+                                  onPressed: () => _sendCodeToPhoneNumber(),
+                                  color: Colors.blueGrey,
+                                  child: Text(
+                                    'Verificar',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16.0,
+                                    ),
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: <Widget>[
+                            Container(
+                              width: 250,
+                              child: TextFormField(
+                                controller: _codeController,
+                                maxLength: 6,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(6)
+                                ],
+                                keyboardType: TextInputType.number,
+                                style: TextStyle(color: Colors.black),
+                                decoration: InputDecoration(
+                                  counterText: '',
+                                  suffixIcon: Icon(Icons.check_circle),
+                                  hintText: 'XXXXXX',
+                                  labelText: 'Código de confirmação',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                ),
+                                validator: (code) {
+                                  if (code.isEmpty || !code.contains(''))
+                                    return 'Codigo inválido';
+                                  return null;
+                                },
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 16),
                         Container(
+                          height: 50,
                           child: SizedBox(
-                            width: 230.0,
                             child: RaisedButton(
                               color: Colors.blueGrey,
                               shape: RoundedRectangleBorder(
@@ -282,22 +380,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               onPressed: () {
                                 print(_typeModel.orderBy);
                                 print(_nameController);
-
-                                print(_cpfController.text.length);
-                                print(_phoneController.text);
+                                print(_passwordController.text.length < 6);
                                 if (_formKey.currentState.validate()) {
-                                  final key = keyutf.Key.fromUtf8(
+                                  final key = keyUtf.Key.fromUtf8(
                                       'my 32 length key................');
-                                  final iv = keyutf.IV.fromLength(16);
-                                  final encrypter =
-                                      keyutf.Encrypter(keyutf.AES(key));
+                                  final iv = keyUtf.IV.fromLength(16);
+                                  final encrypt =
+                                      keyUtf.Encrypter(keyUtf.AES(key));
                                   print('Validação ok');
-                                  final encrypted = encrypter.encrypt(
+                                  final encrypted = encrypt.encrypt(
                                       _passwordController.text,
                                       iv: iv);
 
                                   Map<String, dynamic> userData = {
-                                    'name': _nameController.text,
+                                    _typeModel.orderBy == OrderBy.TO_ME
+                                        ? 'name'
+                                        : 'corpname': _nameController.text,
                                     'email': _emailController.text,
                                     'password': encrypted.base64,
                                     _typeModel.orderBy == OrderBy.TO_ME
@@ -331,20 +429,65 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           textAlign: TextAlign.center,
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
-                        SignInButton(
-                          Buttons.Google,
-                          text: 'Google',
-                          onPressed: () {},
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                        Container(
+                          height: 50,
+                          child: RaisedButton(
+                            color: Color(0xFFFFFFFF),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0)),
+                            onPressed: () {},
+                            child: Row(
+                              children: <Widget>[
+                                Image.asset(
+                                  'images/google_logo.png',
+                                  height: 20,
+                                ),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left:
+                                            MediaQuery.of(context).size.width /
+                                                3.5),
+                                    child: Text(
+                                      'Google',
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 16.0,
+                                      ),
+                                    )),
+                              ],
+                            ),
                           ),
                         ),
-                        SignInButton(
-                          Buttons.Facebook,
-                          text: 'Facebook',
-                          onPressed: () {},
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                        SizedBox(
+                          height: 10.0,
+                        ),
+                        Container(
+                          height: 50,
+                          child: RaisedButton(
+                            color: Color(0xFF3B5998),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0)),
+                            onPressed: () {},
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  FontAwesomeIcons.facebook,
+                                  color: Colors.white,
+                                ),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left:
+                                            MediaQuery.of(context).size.width /
+                                                3.5),
+                                    child: Text(
+                                      'Facebook',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16.0,
+                                      ),
+                                    )),
+                              ],
+                            ),
                           ),
                         ),
                         Padding(
@@ -376,7 +519,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     style: TextStyle(
                                       decoration: TextDecoration.underline,
                                       color: Colors.blue,
-                                      fontSize: 16.0,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),

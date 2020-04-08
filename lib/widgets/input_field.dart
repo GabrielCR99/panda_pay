@@ -9,6 +9,7 @@ class InputField extends StatelessWidget {
   final Function(String) onChanged;
   final Stream<String> stream;
   final String labelText;
+  final String initialValue;
   final String Function(String) validateText;
   final List<TextInputFormatter> inputFormatters;
   final TextInputType keyboardType;
@@ -29,11 +30,13 @@ class InputField extends StatelessWidget {
     this.keyboardType,
     this.suffixIcon,
     this.textCapitalization,
+    this.initialValue,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      initialValue: initialValue,
       textCapitalization: textCapitalization,
       inputFormatters: inputFormatters,
       keyboardType: keyboardType,

@@ -47,6 +47,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: Text('Transferir'),
                 ),
                 BottomNavigationBarItem(
+                  icon: Icon(FontAwesomeIcons.externalLinkSquareAlt),
+                  title: Text('Blockchain'),
+                ),
+                BottomNavigationBarItem(
                   icon: Icon(Icons.settings),
                   title: Text('Configurações'),
                 )
@@ -80,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const VerticalDivider(width: 15.0),
                 Text(
-                  'Olá, ${!model.isLoggedIn() ? '' : ''}',
+                  'Olá, ${model.isLoggedIn() ? '${model.userData == null || model.userData.isEmpty ? '${model.googleName.isEmpty ? model.firebaseUser.displayName : model.googleName}' : model.userData['name']}' : ''}',
                   style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.w600,
@@ -99,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               controller: _pageController,
               children: <Widget>[
-                HomTab(),
+                HomeTab(),
                 PayTab(),
                 TransferTab(),
                 BlockChainTab(),

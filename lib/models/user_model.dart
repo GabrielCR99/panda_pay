@@ -129,10 +129,9 @@ class UserModel extends Model {
       switch (e.code) {
         case 'ERROR_USER_NOT_FOUND':
           errorMessageRecovery =
-              'O usuário não foi encontrado no nosso banco de dados.';
+              'O usuário não foi encontrado no nosso banco de dados!';
       }
       onError(errorMessageRecovery);
-      print(e.code);
     });
   }
 
@@ -167,7 +166,6 @@ class UserModel extends Model {
         userData = docUser.data;
       }
     }
-    print(userData);
     notifyListeners();
   }
 

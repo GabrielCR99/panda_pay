@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           Align(
                             alignment: Alignment.bottomRight,
-                            heightFactor: 1.0,
+                            heightFactor: 1.5,
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
@@ -162,18 +162,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                     height: 20,
                                   ),
                                   Padding(
-                                      padding: EdgeInsets.only(
-                                          left: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              3.5),
-                                      child:  Text(
-                                        'Google',
-                                        style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: 16.0,
-                                        ),
-                                      )),
+                                    padding: EdgeInsets.only(
+                                        left:
+                                            MediaQuery.of(context).size.width /
+                                                3.5),
+                                    child: Text(
+                                      'Google',
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),

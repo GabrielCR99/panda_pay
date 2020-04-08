@@ -94,26 +94,29 @@ class _PasswordRecoveryState extends State<PasswordRecovery> {
                           hint: 'O E-mail cadastrado no app',
                         ),
                         const SizedBox(height: 16),
-                        RaisedButton(
-                          color: Colors.blueGrey,
-                          onPressed: () {
-                            if (_formKey.currentState.validate())
-                              model.sendPasswordRecovery(
-                                  _emailController.text, _onSuccess,
-                                  (errorMessage) {
-                                _onError(errorMessage);
-                                return null;
-                              });
-                          },
-                          child: Text(
-                            'Enviar',
-                            style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white),
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                        Container(
+                          height: 50,
+                          child: RaisedButton(
+                            color: Colors.blueGrey,
+                            onPressed: () {
+                              if (_formKey.currentState.validate())
+                                model.sendPasswordRecovery(
+                                    _emailController.text, _onSuccess,
+                                    (errorMessage) {
+                                  _onError(errorMessage);
+                                  return null;
+                                });
+                            },
+                            child: Text(
+                              'Enviar',
+                              style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
                           ),
                         ),
                       ],

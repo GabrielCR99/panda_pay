@@ -1,5 +1,5 @@
 name: pandapay
-description: PandaPay screens for intern&#x27;s job
+description: PandaPay's app
 
 version: 1.0.0+1
 
@@ -14,18 +14,17 @@ dependencies:
   firebase_auth: ^0.15.5+3
   cloud_firestore: ^0.12.9
   image_picker: ^0.6.2+3
-  image_cropper: ^1.1.1
+  image_cropper: ^1.2.1
   flutter_launcher_icons: ^0.7.4
   font_awesome_flutter: ^8.5.0
   scoped_model: ^1.0.1
-  firebase_storage: ^3.1.1
   intro_slider: ^2.2.9
-  flutter_signin_button: ^1.0.0
   flutter_masked_text: ^0.8.0
   brasil_fields: ^0.0.7+2
   cpfcnpj: ^1.0.3
   google_sign_in: ^4.1.1
   encrypt: ^4.0.0
+  sqflite: ^1.2.0
 
 dev_dependencies:
   flutter_test:

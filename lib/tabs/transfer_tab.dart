@@ -8,6 +8,8 @@ class TransferTab extends StatefulWidget {
 class _TransferTabState extends State<TransferTab> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(
+      color: Colors.white,
+    );
   }
 }

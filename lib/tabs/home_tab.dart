@@ -1,16 +1,16 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pandapay/models/user_model.dart';
-import 'package:pandapay/screens/sign_in_screen.dart';
 import 'package:pandapay/widgets/custom_drawer.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class HomTab extends StatefulWidget {
+class HomeTab extends StatefulWidget {
   @override
-  _HomTabState createState() => _HomTabState();
+  _HomeTabState createState() => _HomeTabState();
 }
 
-class _HomTabState extends State<HomTab> {
+class _HomeTabState extends State<HomeTab> {
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<UserModel>(
@@ -132,6 +132,7 @@ class _HomTabState extends State<HomTab> {
                                     Icon(
                                       FontAwesomeIcons.creditCard,
                                       size: 45,
+                                      color: Colors.white,
                                     ),
                                     SizedBox(
                                       height: constraints.maxHeight * .02,
@@ -150,7 +151,7 @@ class _HomTabState extends State<HomTab> {
                               ),
                             ),
                             decoration: BoxDecoration(
-                              color: Color(0xFF13CE66),
+                              color: Color(0xFF474747),
                               border: Border.all(color: Colors.transparent),
                               borderRadius: BorderRadius.all(
                                 Radius.circular(20.0),
@@ -177,6 +178,7 @@ class _HomTabState extends State<HomTab> {
                                       children: <Widget>[
                                         Icon(
                                           FontAwesomeIcons.mobileAlt,
+                                          color: Colors.white,
                                           size: 45,
                                         ),
                                         SizedBox(
@@ -194,7 +196,7 @@ class _HomTabState extends State<HomTab> {
                                   ),
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.blue,
+                                  color: Color(0xFF0851A9),
                                   border: Border.all(color: Colors.grey),
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(20.0),
@@ -220,12 +222,13 @@ class _HomTabState extends State<HomTab> {
                                         Icon(
                                           FontAwesomeIcons.busAlt,
                                           size: 45,
+                                          color: Colors.white,
                                         ),
                                         SizedBox(
                                           height: constraints.maxHeight * .01,
                                         ),
                                         Text(
-                                          'Carregar Bilhete Único',
+                                          'Carregar Transporte',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: Colors.white,
@@ -275,6 +278,7 @@ class _HomTabState extends State<HomTab> {
                                         ),
                                         Text(
                                           'Voucher e créditos ',
+                                          textAlign: TextAlign.center,
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w600,
@@ -330,7 +334,7 @@ class _HomTabState extends State<HomTab> {
                                   ),
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Color(0xFF3115E8),
+                                  color: Color(0xFF13CE67),
                                   border: Border.all(
                                     color: Colors.transparent,
                                   ),
@@ -343,6 +347,50 @@ class _HomTabState extends State<HomTab> {
                           ],
                         ),
                       ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: constraints.maxHeight * .05,
+                  ),
+                  Container(
+                    color: Color(0xFFF5F5F5),
+                    height: 100,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: constraints.maxWidth * .03,
+                      ),
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            FontAwesomeIcons.mobileAlt,
+                            size: 45,
+                          ),
+                          Container(
+                            width: 335,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8.0, top: 16, right: 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    'Traga seus amigos e transfira ilimitadamente!',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w600),
+                                  ),
+                                  SizedBox(
+                                    height: 8.0,
+                                  ),
+                                  Text(
+                                    'Transferências entre usuários PandaPay são grátis '
+                                    'e não dependem do horário bancário. Quantas vezes quiser e quando quiser.',
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

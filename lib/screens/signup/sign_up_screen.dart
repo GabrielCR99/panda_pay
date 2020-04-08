@@ -33,48 +33,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String verificationId;
 
   /// Sends the code to the specified phone number.
-  Future<void> _sendCodeToPhoneNumber() async {
-    final PhoneVerificationCompleted verificationCompleted =
-        (AuthCredential auth) {
-      setState(() {
-        print(
-            'Inside _sendCodeToPhoneNumber: signInWithPhoneNumber auto succeeded: $auth');
-      });
-    };
-
-    final PhoneVerificationFailed verificationFailed =
-        (AuthException authException) {
-      setState(() {
-        print(
-            'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
-      });
-    };
-
-    final PhoneCodeSent codeSent =
-        (String verificationId, [int forceResendingToken]) async {
-      this.verificationId = verificationId;
-      print(
-          'code sent to ${_phoneController.text.replaceAll('(', '').replaceAll(')', '')} $forceResendingToken');
-    };
-
-    final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
-        (String verificationId) {
-      this.verificationId = verificationId;
-      print("time out");
-      AuthCredential a = PhoneAuthProvider.getCredential(
-          verificationId: verificationId, smsCode: 'asdqwe');
-      print(a.toString().contains('asdqwe'));
-    };
-
-    await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber:
-            '+55${_phoneController.text.replaceAll('(', '').replaceAll(')', '')}',
-        timeout: const Duration(seconds: 5),
-        verificationCompleted: verificationCompleted,
-        verificationFailed: verificationFailed,
-        codeSent: codeSent,
-        codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
-  }
+  /// Still needs to get smsCode
 
   @override
   Widget build(BuildContext context) {
@@ -316,7 +275,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             Padding(
                               padding: const EdgeInsets.only(left: 16.0),
                               child: Container(
-                                width: 110,
+                                width: MediaQuery.of(context).size.width / 4,
                                 height: 50,
                                 child: RaisedButton(
                                   disabledColor: Colors.blueGrey.withAlpha(150),
@@ -393,9 +352,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       iv: iv);
 
                                   Map<String, dynamic> userData = {
-                                    _typeModel.orderBy == OrderBy.TO_ME
-                                        ? 'name'
-                                        : 'corpname': _nameController.text,
+                                    'name': _nameController.text,
                                     'email': _emailController.text,
                                     'password': encrypted.base64,
                                     _typeModel.orderBy == OrderBy.TO_ME
@@ -435,7 +392,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             color: Color(0xFFFFFFFF),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20.0)),
-                            onPressed: () {},
+                            onPressed: () async {
+                              FirebaseUser user = await model.googleLogin();
+                              if (user == null)
+                                _scaffoldKey.currentState.showSnackBar(
+                                  SnackBar(
+                                    content: const Text(
+                                        'Erro ao fazer login com Google!'),
+                                  ),
+                                );
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => HomeScreen()),
+                              );
+                            },
                             child: Row(
                               children: <Widget>[
                                 Image.asset(
@@ -443,17 +413,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   height: 20,
                                 ),
                                 Padding(
-                                    padding: EdgeInsets.only(
-                                        left:
-                                            MediaQuery.of(context).size.width /
-                                                3.5),
-                                    child: Text(
-                                      'Google',
-                                      style: TextStyle(
-                                        color: Colors.grey[600],
-                                        fontSize: 16.0,
-                                      ),
-                                    )),
+                                  padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width /
+                                          3.5),
+                                  child: Text(
+                                    'Google',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 16.0,
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -561,5 +531,50 @@ class _SignUpScreenState extends State<SignUpScreen> {
         duration: Duration(seconds: 3),
       ),
     );
+  }
+
+  ///Sends the SMS code to the user
+  /// TODO: verify if TextFormField's code equals smsCode
+  Future<void> _sendCodeToPhoneNumber() async {
+    final PhoneVerificationCompleted verificationCompleted =
+        (AuthCredential auth) {
+      setState(() {
+        print(
+            'Inside _sendCodeToPhoneNumber: signInWithPhoneNumber auto succeeded: $auth');
+      });
+    };
+
+    final PhoneVerificationFailed verificationFailed =
+        (AuthException authException) {
+      setState(() {
+        print(
+            'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
+      });
+    };
+
+    final PhoneCodeSent codeSent =
+        (String verificationId, [int forceResendingToken]) async {
+      this.verificationId = verificationId;
+      print(
+          'code sent to ${_phoneController.text.replaceAll('(', '').replaceAll(')', '')} $forceResendingToken');
+    };
+
+    final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
+        (String verificationId) {
+      this.verificationId = verificationId;
+      print("time out");
+      AuthCredential a = PhoneAuthProvider.getCredential(
+          verificationId: verificationId, smsCode: '123456');
+      print(a.toString().contains('123456'));
+    };
+
+    await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber:
+            '+55${_phoneController.text.replaceAll('(', '').replaceAll(')', '')}',
+        timeout: const Duration(seconds: 5),
+        verificationCompleted: verificationCompleted,
+        verificationFailed: verificationFailed,
+        codeSent: codeSent,
+        codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
   }
 }

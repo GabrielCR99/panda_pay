@@ -13,7 +13,8 @@ class MyApp extends StatelessWidget {
       child: ScopedModelDescendant<UserModel>(
         builder: (context, child, model) {
           return MaterialApp(
-            title: 'Flutter Demo',
+            title: 'PandaPay',
+            debugShowCheckedModeBanner: false,
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ),

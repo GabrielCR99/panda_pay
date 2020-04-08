@@ -26,9 +26,9 @@ class CustomDrawer extends StatelessWidget {
                             backgroundImage: AssetImage('images/person.png'),
                           ),
                           accountName: Text(
-                              '${model.isGoogleSignIn() ? ' ${model.googleName}' : ' ${model.userData['name']}'}'),
+                              '${model.isLoggedIn() ? '${model.userData == null || model.userData.isEmpty ? '${model.googleName.isEmpty ? model.firebaseUser.displayName : model.googleName}' : model.userData['name']}' : ''}'),
                           accountEmail: Text(
-                              '${model.isGoogleSignIn() ? ' ${model.googleEmail}' : ' ${model.userData['email']}'}'),
+                              '${model.isLoggedIn() ? '${model.userData == null || model.userData.isEmpty ? '${model.googleEmail.isEmpty ? model.firebaseUser.email : model.googleEmail}' : model.userData['email']}' : ''}'),
                         ),
                         const Divider(height: 20.0),
                         DrawerTile(
